@@ -1,11 +1,33 @@
 // grab the form
 const form = document.getElementById('loan-form');
+const loadingGif = document.getElementById('loading');
+const results = document.getElementById('results');
+// let error = true;
 
 // Listen for submit
-form.addEventListener('submit', calculateResults);
+form.addEventListener('submit', revealResults);
+
+// event handler
+function revealResults(event) {
+  // console.log(`and the results are`); // verify it's linked
+  hideElement(results);
+  displayElement(loadingGif); // nested display element and hide loadingGif in the if statement that determines there's an error to prevent the loadingGif from showing if the error is triggered
+  calculateResults();
+  event.preventDefault();
+}
+
+function displayElement(e) {
+  e.style.display = 'block';
+  console.log(`showing ${e}`);
+}
+
+function hideElement(e) {
+  e.style.display = 'none';
+  console.log(`hiding ${e}`);
+}
 
 // Math
-function calculateResults(event) {
+function calculateResults() {
   // Verify function is linked
   // console.log('calculating')
   // Variables for calculations
@@ -16,11 +38,8 @@ function calculateResults(event) {
   const ttlPmt = document.getElementById('total-payment');
   const ttlInterest = document.getElementById('total-interest');
   // verify variables are linked to DOM
-  /* console.log(
-    `${loanAmt.value}, ${interest.value}, ${pmtYears.value}, ${
-      monthlyPmt.value
-    }, ${ttlPmt.value}, ${ttlInterest.value}`
-  ); */
+  // console.log(`${loanAmt.value}, ${interest.value}, ${pmtYears.value}, ${
+  //    monthlyPmt.value}, ${ttlPmt.value}, ${ttlInterest.value}`);
 
   // Calculations
   const principal = parseFloat(loanAmt.value); // turns it into a decimal
@@ -34,12 +53,17 @@ function calculateResults(event) {
     monthlyPmt.value = monthly.toFixed(2);
     ttlPmt.value = (monthly * calcPmts).toFixed(2);
     ttlInterest.value = (monthly * calcPmts - principal).toFixed(2);
+    setTimeout(function() {
+      hideElement(loadingGif);
+      displayElement(results);
+    }, 2000);
   } else {
-    // console.log(`this isn't finite`); // verify else works, then code the showError function
+    // console.log(`this isn't finite`); // verify else works; code the showError function later
+    hideElement(loadingGif);
     showError('Please enter all of the values below.');
   }
 
-  event.preventDefault();
+  // event.preventDefault(); // Move up to the new revealResults event handler, as calculateResults() is now just a function and no longer an event handler.
 }
 
 // Show error
@@ -51,10 +75,18 @@ function showError(errorMssg) {
   errorDiv.appendChild(document.createTextNode(errorMssg));
   // Insert error after heading
   card.insertBefore(errorDiv, form);
+  // error = true;
 
   setTimeout(clearError, 3000);
 }
 
 function clearError() {
   document.querySelector('.alert').remove();
+  // error = false;
 }
+
+/*
+ * debug - can get multiple error messages in the 3 seconds
+ *   1. disable the button right below error = true && enable it in clearError
+ *   2. set a condition that must be met, like if alert === true, do not showError with the inital value of let alert = true; and then put alert = false to the clearError. ()
+ */
