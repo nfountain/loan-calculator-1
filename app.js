@@ -1,8 +1,9 @@
 // grab the form
 const form = document.getElementById('loan-form');
+const card = document.querySelector('.card');
 const loadingGif = document.getElementById('loading');
 const results = document.getElementById('results');
-// let error = true;
+let alreadyAlerted = false;
 
 // Listen for submit
 form.addEventListener('submit', revealResults);
@@ -60,7 +61,7 @@ function calculateResults() {
   } else {
     // console.log(`this isn't finite`); // verify else works; code the showError function later
     hideElement(loadingGif);
-    showError('Please enter all of the values below.');
+    showError();
   }
 
   // event.preventDefault(); // Move up to the new revealResults event handler, as calculateResults() is now just a function and no longer an event handler.
@@ -68,21 +69,27 @@ function calculateResults() {
 
 // Show error
 
-function showError(errorMssg) {
-  const card = document.querySelector('.card');
+function showError() {
+  if (alreadyAlerted === false) {
+    popupAlert('Please enter all of the values below.');
+    alreadyAlerted = true;
+    setTimeout(clearError, 3000);
+  } else {
+    console.log(`there is already an alert`);
+  }
+}
+
+function popupAlert(errorMssg) {
   const errorDiv = document.createElement('div');
   errorDiv.className = 'alert alert-danger'; // bootstrap classes
   errorDiv.appendChild(document.createTextNode(errorMssg));
   // Insert error after heading
   card.insertBefore(errorDiv, form);
-  // error = true;
-
-  setTimeout(clearError, 3000);
 }
 
 function clearError() {
   document.querySelector('.alert').remove();
-  // error = false;
+  alreadyAlerted = false;
 }
 
 /*
