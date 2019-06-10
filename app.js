@@ -35,8 +35,26 @@ function calculateResults(event) {
     ttlPmt.value = (monthly * calcPmts).toFixed(2);
     ttlInterest.value = (monthly * calcPmts - principal).toFixed(2);
   } else {
-    console.log(`this isn't finite`);
+    // console.log(`this isn't finite`); // verify else works, then code the showError function
+    showError('Please enter all of the values below.');
   }
 
   event.preventDefault();
+}
+
+// Show error
+
+function showError(errorMssg) {
+  const card = document.querySelector('.card');
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'alert alert-danger'; // bootstrap classes
+  errorDiv.appendChild(document.createTextNode(errorMssg));
+  // Insert error after heading
+  card.insertBefore(errorDiv, form);
+
+  setTimeout(clearError, 3000);
+}
+
+function clearError() {
+  document.querySelector('.alert').remove();
 }
